@@ -13,9 +13,22 @@ from tkinter import ttk
 
 root = tk.Tk()
 root.title("Distance Converter")
-
 # adjustable width for column
 #root.columnconfigure(0, weight=1)
+
+# text variable for input
+metres_value = tk.StringVar()
+
+# fn to calculate feet at button press
+def calculate_feet(*args):
+    try:
+        #pass
+        metres = float(metres_value.get())
+        feet = metres*3.28084
+        print(f"{metres} metres is equal to {feet:.3f} feet.")
+    except ValueError: # avoid crashing our program if value isn't provided
+        pass
+
 
 # frame
 main = ttk.Frame(root, padding=(30,15))
@@ -24,10 +37,10 @@ main.grid() # col 0 and ro 0
 # create widgets
 # label and buttons
 metres_label = ttk.Label(main, text="Metres: ")
-metres_input = ttk.Entry(main, width=10)
+metres_input = ttk.Entry(main, width=10, textvariable=metres_value)
 feet_label = ttk.Label(main, text="Feet: ")
 feet_display = ttk.Label(main, text="Feet shown here")
-calc_button = ttk.Button(main, text="Calculate")
+calc_button = ttk.Button(main, text="Calculate", command=calculate_feet)
 
 # place all elements in the main frame by using grid
 # top most element, metres label and 
