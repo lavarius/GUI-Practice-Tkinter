@@ -4,6 +4,13 @@
 import tkinter as tk
 from tkinter import ttk # widgets, native looking windows
 
+# enable high dPI in windows 10
+try:
+    from ctypes import windll
+    windll.shcore.SetProcessDpiAwareness(1)
+except:
+    pass # other OS
+
 def greet():
     print(f"Hello, {user_name.get() or 'Unnamed World'}!")
 
