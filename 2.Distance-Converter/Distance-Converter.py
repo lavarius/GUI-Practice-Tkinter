@@ -78,7 +78,7 @@ class MetresToFeet(ttk.Frame):
         switch_page_button.grid(column=0, row=3, columnspan=2, sticky="EW")
         # Widget Info Window, padx and pady on all children
         for child in self.winfo_children():
-            child.grid_configure(padx=15, pady=15)
+            child.grid_configure(padx=10, pady=10)
             
     # fn to calculate feet at button press
     def calculate(self, *args):
@@ -119,7 +119,7 @@ class FeetToMetres(ttk.Frame):
         
         # Widget Info Window, padx and pady on all Children
         for child in self.winfo_children():
-            child.grid_configure(padx=15, pady=15)
+            child.grid_configure(padx=10, pady=10)
             
     # fn to calculate feet at button press
     def calculate(self, *args):

@@ -8,6 +8,7 @@ Milestone Project: Pomodoro Timer
 import tkinter as tk
 from tkinter import ttk
 from collections import deque # for rotating items in a list
+# controller
 class PomodoroTimer(tk.Tk):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -16,25 +17,32 @@ class PomodoroTimer(tk.Tk):
         self.columnconfigure(0, weight=1)
         self.rowconfigure(1, weight=1)
 
+        # creating amount of time each timer lasts for
+        self.pomodoro = tk.StringVar(value=25)
+        self.long_break = tk.StringVar(value=15)
+        self.short_break = tk.StringVar(value=5)
+
+        # control time and timings, timer moved from timer class
+        self.timer_order = ["Pomodoro", "Short Break", "Pomodoro", "Short Break", "Pomodoro", "long Break"]
+        # Create a deck with this list, keeping it unchanged, Rearranging with deck instead of a list
+        self.timer_schedule = deque(self.timer_order) # rotate elements from one end to another
+
         container = ttk.Frame(self)
         container.grid()
         container.columnconfigure(0, weight=1)
 
-        timer_frame = Timer(container)
+        timer_frame = Timer(container, self)
         timer_frame.grid(row=0, column=0, sticky="NESW")
 
+# only control timer
 class Timer(ttk.Frame):
-    def __init__(self, parent):
+    def __init__(self, parent, controller):
         super().__init__(parent)
-
-        self.current_time = tk.StringVar(value="00:10")
-        # List describing timers
-        self.timer_order = ["Pomodoro", "Short Break", "Pomodoro", "Short Break", "Pomodoro", "long Break"]
-        # Create a deck with this list, keeping it unchanged
-        # Rearranging with deck instead of a list
-        self.timer_schedule = deque(self.timer_order) # rotate elements from one end to another
+        self.controller = controller
+        pomodoro_time = int(controller.pomodoro.get())
+        self.current_time = tk.StringVar(value=f"{pomodoro_time:02d}:10")
         # creating a label to show which timer we are on
-        self.current_timer_label = tk.StringVar(value=self.timer_schedule[0])
+        self.current_timer_label = tk.StringVar(value=controller.timer_schedule[0])
         self.timer_running = False
         # private variable to check for decrement chain within class Timer
         self._timer_decrement_job = None # private variable "_..."
@@ -61,7 +69,7 @@ class Timer(ttk.Frame):
         # add button container
         button_container = ttk.Frame(self, padding = 10)
         button_container.grid(row=2, column=0, sticky="EW")
-        button_container.columnconfigure((0,1), weight=1) # r0,c1 w/in container spanning 
+        button_container.columnconfigure((0, 1, 2), weight=1) # r0,c1 w/in container spanning 
 
         self.start_button = ttk.Button(
             button_container,
@@ -81,6 +89,15 @@ class Timer(ttk.Frame):
         )
         self.stop_button.grid(row=0, column=1, sticky="EW", padx=5)
 
+        # no self because it doesn't need to be accessed outside of this method
+        reset_button = ttk.Button(
+            button_container,
+            text="Reset",
+            command=self.reset_timer,
+            cursor="hand2"
+        )
+        reset_button.grid(row=0, column=2, sticky="EW")
+
     def start_timer(self):
         self.timer_running = True
         self.start_button["state"] = "disabled" # disable start button
@@ -96,6 +113,12 @@ class Timer(ttk.Frame):
         if self._timer_decrement_job:
             self.after_cancel(self._timer_decrement_job)
             self._timer_decrement_job = None
+    def reset_timer(self):
+        self.stop_timer() # stop timer
+        pomodoro_time = int(self.controller.pomodoro.get())
+        self.current_time.set(f"{pomodoro_time:02d}:00") # reset Pomodoro
+        self.controller.timer_schedule = deque(self.controller.timer_order) # restart with default list
+        self.current_timer_label.set(self.controller.timer_schedule[0]) # reset timer description label
 
     def decrement_time(self):
         # start off with current time
@@ -117,17 +140,20 @@ class Timer(ttk.Frame):
             self._timer_decrement_job = self.after(1000, self.decrement_time) # every 1s, call function
         elif self.timer_running and current_time == "00:00":
             # assume we are on the first setting "Pomodoro"
-            self.timer_schedule.rotate(-1) # takes first value and moves it to the end
-            next_up = self.timer_schedule[0]
+            self.controller.timer_schedule.rotate(-1) # takes first value and moves it to the end
+            next_up = self.controller.timer_schedule[0]
             # update timer type label
             self.current_timer_label.set(next_up)
 
             if next_up == "Pomodoro":
-                self.current_time.set("25:00")
+                pomodoro_time = int(self.controller.pomodoro.get())
+                self.current_time.set(f"{pomodoro_time:02d}:00")
             elif next_up == "Short Break":
-                self.current_time.set("05:00")
+                short_break_time = int(self.controller.short_break.get())
+                self.current_time.set(f"{short_break_time:02d}00")
             elif next_up == "Long Break":
-                self.current_time.set("15:00")
+                long_break_time = int(self.controller.long_break.get())
+                self.current_time.set(f"{long_break_time:02d}:00")
                 
             self.after(1000, self.decrement_time)
 
