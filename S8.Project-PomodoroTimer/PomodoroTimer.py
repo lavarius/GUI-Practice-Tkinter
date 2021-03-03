@@ -35,7 +35,9 @@ class Timer(ttk.Frame):
         self.timer_schedule = deque(self.timer_order) # rotate elements from one end to another
         # creating a label to show which timer we are on
         self.current_timer_label = tk.StringVar(value=self.timer_schedule[0])
-        self.timer_running = True
+        self.timer_running = False
+        # private variable to check for decrement chain within class Timer
+        self._timer_decrement_job = None # private variable "_..."
 
         timer_description = ttk.Label(
             self,
@@ -44,12 +46,11 @@ class Timer(ttk.Frame):
 
         timer_description.grid(row=0, column=0, sticky="W", padx=(10,0), pady=(10,0))
 
-
         # creat another inner frame for this Label
         timer_frame = ttk.Frame(self, height="100")
-        timer_frame.grid(pady=(10,0), sticky="NSEW")
+        timer_frame.grid(row=1, column=0, pady=(10,0), sticky="NSEW")
 
-        # create label
+        # create label inside timer_frame
         timer_counter = ttk.Label(
             timer_frame, # inside timer frame
             textvariable=self.current_time
@@ -57,7 +58,44 @@ class Timer(ttk.Frame):
         #timer_counter.grid() # place in row 0 col 0 of timer frame
         timer_counter.place(relx=0.5, rely=0.5, anchor="center") # pack and grid, position elements relative to elements
                                 # place to absolutely position elements
-        self.decrement_time() # call this every second
+        # add button container
+        button_container = ttk.Frame(self, padding = 10)
+        button_container.grid(row=2, column=0, sticky="EW")
+        button_container.columnconfigure((0,1), weight=1) # r0,c1 w/in container spanning 
+
+        self.start_button = ttk.Button(
+            button_container,
+            text="Start",
+            command=self.start_timer,
+            cursor="hand2"
+        )
+        # https://www.tcl.tk/man/tcl8.4/TkCmd/cursors.htm
+        self.start_button.grid(row=0, column=0, sticky="EW")
+
+        self.stop_button = ttk.Button(
+            button_container,
+            text="Stop",
+            state="disabled",
+            command=self.stop_timer,
+            cursor="hand2"
+        )
+        self.stop_button.grid(row=0, column=1, sticky="EW", padx=5)
+
+    def start_timer(self):
+        self.timer_running = True
+        self.start_button["state"] = "disabled" # disable start button
+        self.stop_button["state"] = "enabled"
+        self.decrement_time() # start decrementing time
+
+    def stop_timer(self):
+        self.timer_running = False
+        self.start_button["state"] = "enabled"
+        self.stop_button["state"] = "enabled" # disable stop button
+        # terminate job if one exists
+
+        if self._timer_decrement_job:
+            self.after_cancel(self._timer_decrement_job)
+            self._timer_decrement_job = None
 
     def decrement_time(self):
         # start off with current time
@@ -76,7 +114,7 @@ class Timer(ttk.Frame):
             
             self.current_time.set(f"{minutes:02d}:{seconds:02d}")
             # call after method() of the frame
-            self.after(1000, self.decrement_time) # every 1s, call function
+            self._timer_decrement_job = self.after(1000, self.decrement_time) # every 1s, call function
         elif self.timer_running and current_time == "00:00":
             # assume we are on the first setting "Pomodoro"
             self.timer_schedule.rotate(-1) # takes first value and moves it to the end
