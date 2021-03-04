@@ -3,10 +3,14 @@ import tkinter as tk
 from tkinter import ttk
 
 class Settings(ttk.Frame):
-    def __init__(self, parent, controller):
+    def __init__(self, parent, controller, show_timer):
         super().__init__(parent)
         # similar to the timer frame, has a parent and a controller, getting different values
         
+        # additional configurations, to tighten up the look
+        self.columnconfigure(0, weight=1)
+        self.rowconfigure(2, weight=1)
+
         # settings container frame
         settings_container = ttk.Frame(
             self,
@@ -76,4 +80,16 @@ class Settings(ttk.Frame):
         # Breathing Room
         for child in settings_container.winfo_children():
             child.grid_configure(padx=5, pady=5)
-            
+
+        # Back Button
+        button_container = ttk.Frame(self)
+        button_container.grid(sticky="EW", padx=10) # placed in next row
+        button_container.columnconfigure(0, weight=1) # configure the column 0 to take up all the available space
+
+        timer_button = ttk.Button(
+            button_container,
+            text="<- Back",
+            command=show_timer, # call fn from lambda function
+            cursor="hand2"
+        )
+        timer_button.grid(column=0, row=0, sticky="EW", padx=2)

@@ -13,7 +13,7 @@ from collections import deque # for rotating items in a list
 
 # only control timer
 class Timer(ttk.Frame):
-    def __init__(self, parent, controller):
+    def __init__(self, parent, controller, show_settings):
         super().__init__(parent)
         self.controller = controller
         pomodoro_time = int(controller.pomodoro.get())
@@ -31,9 +31,18 @@ class Timer(ttk.Frame):
 
         timer_description.grid(row=0, column=0, sticky="W", padx=(10,0), pady=(10,0))
 
-        # creat another inner frame for this Label
+        # Adds Settings button
+        settings_button = ttk.Button(
+            self,
+            text="Settings",
+            command=show_settings, # calling show_settings fn when clicked
+            cursor="hand2"
+        )
+        settings_button.grid(row=0, column=1, sticky="E", padx=10, pady=(10,0))
+
+        # create another inner frame for this Label, span=2
         timer_frame = ttk.Frame(self, height="100")
-        timer_frame.grid(row=1, column=0, pady=(10,0), sticky="NSEW")
+        timer_frame.grid(row=1, column=0, columnspan=2, pady=(10,0), sticky="NSEW")
 
         # create label inside timer_frame
         timer_counter = ttk.Label(
@@ -45,7 +54,7 @@ class Timer(ttk.Frame):
                                 # place to absolutely position elements
         # add button container
         button_container = ttk.Frame(self, padding = 10)
-        button_container.grid(row=2, column=0, sticky="EW")
+        button_container.grid(row=2, column=0, columnspan=2, sticky="EW")
         button_container.columnconfigure((0, 1, 2), weight=1) # r0,c1 w/in container spanning 
 
         self.start_button = ttk.Button(

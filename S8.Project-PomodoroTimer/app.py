@@ -32,15 +32,29 @@ class PomodoroTimer(tk.Tk):
         # Create a deck with this list, keeping it unchanged, Rearranging with deck instead of a list
         self.timer_schedule = deque(self.timer_order) # rotate elements from one end to another
 
+        # Add container
         container = ttk.Frame(self)
         container.grid()
         container.columnconfigure(0, weight=1)
-
-        # timer_frame = Timer(container, self)
-        # timer_frame.grid(row=0, column=0, sticky="NESW")
-
-        settings_frame = Settings(container, self)  
+        
+        # keep track of frames
+        self.frames = dict()
+        # frames on top of each other
+        timer_frame = Timer(container, self, lambda: self.show_frame(Settings))
+        timer_frame.grid(row=0, column=0, sticky="NESW")
+        # define a lambda function that calls self.show_frame to show a frame
+        settings_frame = Settings(container, self, lambda: self.show_frame(Timer))  
         settings_frame.grid(row=0, column=0, sticky="NESW")
+        
+        self.frames[Timer] = timer_frame # key= Timer : value=timer_frame pair
+        self.frames[Settings] = settings_frame
+
+        self.show_frame(Timer) # first frame to show
+
+    def show_frame(self, container):
+        frame = self.frames[container]
+        frame.tkraise()
+
 
 app = PomodoroTimer()
 app.mainloop()
