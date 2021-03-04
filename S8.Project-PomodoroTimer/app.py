@@ -11,7 +11,8 @@ Basically main
 import tkinter as tk
 from tkinter import ttk
 from collections import deque # for rotating items in a list
-from frames import Timer #, Settings
+from frames import Timer, Settings
+
 # controller
 class PomodoroTimer(tk.Tk):
     def __init__(self, *args, **kwargs):
@@ -35,8 +36,11 @@ class PomodoroTimer(tk.Tk):
         container.grid()
         container.columnconfigure(0, weight=1)
 
-        timer_frame = Timer(container, self)
-        timer_frame.grid(row=0, column=0, sticky="NESW")
+        # timer_frame = Timer(container, self)
+        # timer_frame.grid(row=0, column=0, sticky="NESW")
+
+        settings_frame = Settings(container, self)  
+        settings_frame.grid(row=0, column=0, sticky="NESW")
 
 app = PomodoroTimer()
 app.mainloop()
