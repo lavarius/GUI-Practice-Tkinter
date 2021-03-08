@@ -7,6 +7,8 @@ class Settings(ttk.Frame):
         super().__init__(parent)
         # similar to the timer frame, has a parent and a controller, getting different values
         
+        self["style"] = "Background.TFrame"
+
         # additional configurations, to tighten up the look
         self.columnconfigure(0, weight=1)
         self.rowconfigure(2, weight=1)
@@ -15,6 +17,7 @@ class Settings(ttk.Frame):
         settings_container = ttk.Frame(
             self,
             padding = "30 15 30 15",
+            style="Background.TFrame"
         )
 
         settings_container.grid(row=0, column=0, sticky="EW", padx=10, pady=10)
@@ -25,7 +28,8 @@ class Settings(ttk.Frame):
         # Variables will have a label and spin box
         pomodoro_label = ttk.Label(
             settings_container,
-            text="Pomodoro: "
+            text="Pomodoro: ",
+            style="LightText.TLabel"
         )
         pomodoro_label.grid(row=0, column=0, sticky="W")
 
@@ -44,7 +48,8 @@ class Settings(ttk.Frame):
         # long break
         long_break_label = ttk.Label(
             settings_container,
-            text="Long Break Time: "
+            text="Long Break Time: ",
+            style="LightText.TLabel"
         )
         long_break_label.grid(row=1, column=0, sticky="W")
 
@@ -62,7 +67,8 @@ class Settings(ttk.Frame):
         # short break timer
         short_break_label = ttk.Label(
             settings_container,
-            text="Short Break Time: "
+            text="Short Break Time: ",
+            style="LightText.TLabel"
         )
         short_break_label.grid(row=2, column=0, sticky="W")
 
@@ -82,7 +88,7 @@ class Settings(ttk.Frame):
             child.grid_configure(padx=5, pady=5)
 
         # Back Button
-        button_container = ttk.Frame(self)
+        button_container = ttk.Frame(self, style="Background.TFrame")
         button_container.grid(sticky="EW", padx=10) # placed in next row
         button_container.columnconfigure(0, weight=1) # configure the column 0 to take up all the available space
 
@@ -90,6 +96,7 @@ class Settings(ttk.Frame):
             button_container,
             text="<- Back",
             command=show_timer, # call fn from lambda function
+            style="PomodoroButton.TButton",
             cursor="hand2"
         )
         timer_button.grid(column=0, row=0, sticky="EW", padx=2)
