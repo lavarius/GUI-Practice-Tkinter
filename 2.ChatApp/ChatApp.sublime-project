@@ -1,0 +1,16 @@
+{
+	"folders":
+	[
+
+		{
+			"path": ".",
+		},
+	],
+	"virtualenv" : "env",
+	"build_systems": [
+		{
+			"name": "mtg_gurus",
+			"shell_cmd": "./.virtualenvs/mtg_gurus/lib/python3.9 app.py",
+		}
+	],
+}
