@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 import requests
 import datetime
+from PIL import Image, ImageTk
 
 # default sample message, if server was offline
 messages = [{"message": "Hello, world", "date": 15498487}]
@@ -41,6 +42,7 @@ class Chat(ttk.Frame):
         # note can use grid() and pack() in the same application but not the same container
         # since we use pack() on the input_frame, all other widgets must use pack() as well
         # however, anything else inside self, must use grid since self uses grid()
+        self.update_message_widgets()
 
     def get_messages(self):
         """
@@ -66,28 +68,62 @@ class Chat(ttk.Frame):
             )
             # check for existing message labels to remove duplicates
             if (message["message"], message_time) not in existing_labels:
-                container = ttk.Frame(self.messages_frame)
-                container.columnconfigure(1, weight=1)
-                container.grid(sticky="EW", padx=(10, 50), pady=10)
+                self._create_message_container(message["message"], message_time, message_labels)
 
-                time_label = ttk.Label(
-                    container,
-                    text=message_time
-                )
-                time_label.grid(row=0, column=0, sticky="NEW")
+    def _create_message_container(self, message_content, message_time, message_labels):
+        """
+            Creates the message container and is responsible for calling the next method for creating the message contents
+        """
+        container = ttk.Frame(self.messages_frame)
+        container.columnconfigure(1, weight=1)
+        container.grid(sticky="EW", padx=(10, 50), pady=10)
+
+        # call a method to create message content
+        self._create_message_bubble(container, message_content, message_time, message_labels)
+
+    def _create_message_bubble(self, container, message_content, message_time, message_labels):
+        """
+            Creates the message content
+        """
+        # create avatar image bubble
+        avatar_image = Image.open("./assets/avatar_g.jpg")
+        # convert to imageTk image
+        avatar_photo = ImageTk.PhotoImage(avatar_image)
+        avatar_label = ttk.Label(
+            container,
+            image=avatar_photo
+        )
+        # save this image somewhere so it doesn't get trashed
+        avatar_label.image = avatar_photo #creates image property inside avatar label as a custom property assigned as avatar_photo
+        avatar_label.grid(
+            row=0,
+            column=0,
+            rowspan=2, # span time label (row 0) and messsage label (row 1)
+            sticky="NEW",
+            padx=(0, 10),
+            pady=(5,0)
+        )
 
 
-                message_label = ttk.Label(
-                    #self.messages_frame, # inside messages frame
-                    container,
-                    text=message["message"], #obtain 'message' property
-                    anchor="w",
-                    justify="left" # label to left and text to left instead of center (default)
-                )
+        time_label = ttk.Label(
+            container,
+            text=message_time
+        )
+        time_label.grid(row=0, column=1, sticky="NEW")
 
-                # place into container using grid
-                message_label.grid(row=1, column=0, sticky="NSEW")
 
-                # storing the list of message_labels
-                #message_labels.append(message_label)
-                message_labels.append((message_label, time_label))
+        message_label = ttk.Label(
+            #self.messages_frame, # inside messages frame
+            container,
+            #text=message["message"], #obtain 'message' property
+            text=message_content,
+            anchor="w",
+            justify="left" # label to left and text to left instead of center (default)
+        )
+
+        # place into container using grid
+        message_label.grid(row=1, column=1, sticky="NSEW")
+
+        # storing the list of message_labels
+        #message_labels.append(message_label)
+        message_labels.append((message_label, time_label))
