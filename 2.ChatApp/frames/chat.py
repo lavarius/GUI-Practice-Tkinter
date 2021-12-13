@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 import requests
+import datetime
 
 # default sample message, if server was offline
 messages = [{"message": "Hello, world", "date": 15498487}]
@@ -54,22 +55,39 @@ class Chat(ttk.Frame):
 
     def update_message_widgets(self):
         # determine what existing labels we already have?
-        existing_labels = [message["text"] for message in message_labels]
+        # a tuple, in list comprehension
+        existing_labels = [
+            (message["text"], time["text"]) for message, time in message_labels]
 
         for message in messages:
-
+            # message time variable, accompanied with new frame and container
+            message_time = datetime.datetime.fromtimestamp(message["date"]).strftime(
+                "%d-%m-%Y %H:%M:%S"
+            )
             # check for existing message labels to remove duplicates
-            if message["message"] not in existing_labels:
+            if (message["message"], message_time) not in existing_labels:
+                container = ttk.Frame(self.messages_frame)
+                container.columnconfigure(1, weight=1)
+                container.grid(sticky="EW", padx=(10, 50), pady=10)
+
+                time_label = ttk.Label(
+                    container,
+                    text=message_time
+                )
+                time_label.grid(row=0, column=0, sticky="NEW")
+
 
                 message_label = ttk.Label(
-                    self.messages_frame, # inside messages frame
+                    #self.messages_frame, # inside messages frame
+                    container,
                     text=message["message"], #obtain 'message' property
                     anchor="w",
                     justify="left" # label to left and text to left instead of center (default)
                 )
 
                 # place into container using grid
-                message_label.grid(sticky="NSEW")
+                message_label.grid(row=1, column=0, sticky="NSEW")
 
                 # storing the list of message_labels
-                message_labels.append(message_label)
+                #message_labels.append(message_label)
+                message_labels.append((message_label, time_label))
