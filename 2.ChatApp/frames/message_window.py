@@ -106,6 +106,7 @@ class MessageWindow(tk.Canvas):
 			container,
 			#text=message["message"], #obtain 'message' property
 			text=message_content,
+			wraplength=800,
 			anchor="w",
 			justify="left" # label to left and text to left instead of center (default)
 		)
