@@ -4,6 +4,8 @@ import requests
 import datetime
 from PIL import Image, ImageTk
 
+TARGET_SIZE = (56,56)
+
 # default sample message, if server was offline
 messages = [{"message": "Hello, world", "date": 15498487}]
 
@@ -87,8 +89,9 @@ class Chat(ttk.Frame):
         """
         # create avatar image bubble
         avatar_image = Image.open("./assets/avatar_g.jpg")
+        resized_img = avatar_image.resize(TARGET_SIZE)
         # convert to imageTk image
-        avatar_photo = ImageTk.PhotoImage(avatar_image)
+        avatar_photo = ImageTk.PhotoImage(resized_img)
         avatar_label = ttk.Label(
             container,
             image=avatar_photo
