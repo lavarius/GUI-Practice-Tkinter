@@ -11,6 +11,9 @@ class Messenger(tk.Tk):
 
         # define starting size
         self.geometry("1200x500")
+
+        # minimum window application size
+        self.minsize(800, 500)
         # some column and row configurations (c 0, r 0), top left
         # with maximum size possible
         self.columnconfigure(0, weight=1)

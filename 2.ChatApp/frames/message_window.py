@@ -3,6 +3,7 @@ from tkinter import ttk
 import datetime
 from PIL import Image, ImageTk
 
+MAX_MESSAGE_WIDTH = 800
 TARGET_SIZE = (56, 56)
 
 class MessageWindow(tk.Canvas):
@@ -51,6 +52,7 @@ class MessageWindow(tk.Canvas):
 			Mouse scrolling function to allow scrolling 
 			the -int(event.detla/120) is OS dependent
 		"""
+		# https://stackoverflow.com/questions/17355902/tkinter-binding-mousewheel-to-scrollbar/17457843#17457843
 		self.yview_scroll(-int(event.delta/120), "units")
 
 	def update_message_widgets(self, messages, message_labels):
@@ -83,7 +85,7 @@ class MessageWindow(tk.Canvas):
 			"""
 			# _ as like an 'i', but we don't care about the value
 			for label, _ in message_labels:
-				label.configure(wraplength=container.winfo_width() - 130)
+				label.configure(wraplength=min(container.winfo_width() - 130, MAX_MESSAGE_WIDTH))
 
 		container.bind("<Configure>", reconfigure_message_labels)
 
