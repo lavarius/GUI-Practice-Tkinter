@@ -33,6 +33,18 @@ class Chat(ttk.Frame):
         # On row 1, adding something else in row 0 later
         input_frame.grid(row=1, column=0, sticky="EW")
 
+        # create a container for posting messages
+        self.message_input = tk.Text(input_frame, height=3)
+        self.message_input.pack(expand=True, fill="both", side="left", padx=(0, 10))
+
+        message_submit = ttk.Button(
+            input_frame,
+            text="Send",
+            command=self.post_message
+
+        )
+        message_submit.pack() #automatic put on side as top
+
         # Create the button for getting messages
         message_fetch = ttk.Button(
             input_frame,
@@ -45,6 +57,17 @@ class Chat(ttk.Frame):
         # however, anything else inside self, must use grid since self uses grid()
         #self.update_message_widgets()
         self.message_window.update_message_widgets(messages, message_labels)
+
+    def post_message(self):
+        """
+            need content and send request
+
+        """
+        body = "message body"
+        # send message to server
+        requests.post("http://167.99.63.70/message", json={"message": body})
+        # refresh messages
+        self.get_messages()
 
     def get_messages(self):
         """
