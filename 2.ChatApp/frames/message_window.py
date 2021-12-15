@@ -34,6 +34,8 @@ class MessageWindow(tk.Canvas):
 
 		# configure by passing function
 		self.message_frame.bind("<Configure>", configure_scroll_region)
+		# Configure scrolling while on any widget
+		self.bind_all("<MouseWheel>", self._on_mousewheel) # bind_all because we want to trigger this fn whenever we scroll
 
 		# configure scrollbar
 		scrollbar = ttk.Scrollbar(container, orient="vertical", command=self.yview)
@@ -43,6 +45,13 @@ class MessageWindow(tk.Canvas):
 
 		# move the canvas down to the very bottom of scrollable area, contents always on the same place when opening up the application
 		self.yview_moveto(1.0)
+
+	def _on_mousewheel(self, event):
+		"""
+			Mouse scrolling function to allow scrolling 
+			the -int(event.detla/120) is OS dependent
+		"""
+		self.yview_scroll(-int(event.delta/120), "units")
 
 	def update_message_widgets(self, messages, message_labels):
 		# determine what existing labels we already have?
@@ -66,6 +75,19 @@ class MessageWindow(tk.Canvas):
 		container = ttk.Frame(self.message_frame)
 		container.columnconfigure(1, weight=1)
 		container.grid(sticky="EW", padx=(10, 50), pady=10)
+
+		# adding function to message container
+		def reconfigure_message_labels(event):
+			"""
+				reconfigure message labels' size whenever container changes size
+			"""
+			# _ as like an 'i', but we don't care about the value
+			for label, _ in message_labels:
+				label.configure(wraplength=container.winfo_width() - 130)
+
+		container.bind("<Configure>", reconfigure_message_labels)
+
+
 
 		# call a method to create message content
 		self._create_message_bubble(container, message_content, message_time, message_labels)
