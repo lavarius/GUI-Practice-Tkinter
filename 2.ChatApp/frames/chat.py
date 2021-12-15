@@ -63,9 +63,16 @@ class Chat(ttk.Frame):
             need content and send request
 
         """
-        body = "message body"
+        #Test
+        #body = "message body"
+        body = self.message_input.get("1.0", "end").strip()
+
         # send message to server
         requests.post("http://167.99.63.70/message", json={"message": body})
+
+        # delete the message input that was typed previously
+        self.message_input.delete("1.0", "end")
+
         # refresh messages
         self.get_messages()
 
@@ -79,5 +86,8 @@ class Chat(ttk.Frame):
         #print(messages)
         # update the method of printing out messages
         self.message_window.update_message_widgets(messages, message_labels)
+
+        # after 150 ms, move to bottom of scrollable frame
+        self.after(150, lambda: self.message_window.yview_moveto(1.0))
 
     
