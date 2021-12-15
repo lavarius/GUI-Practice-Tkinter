@@ -53,7 +53,10 @@ class MessageWindow(tk.Canvas):
 			the -int(event.detla/120) is OS dependent
 		"""
 		# https://stackoverflow.com/questions/17355902/tkinter-binding-mousewheel-to-scrollbar/17457843#17457843
-		self.yview_scroll(-int(event.delta/120), "units")
+		# windows
+		#self.yview_scroll(-int(event.delta/120), "units")
+		# MacOS
+		self.yview_scroll(-int(event.delta), "units")
 
 	def update_message_widgets(self, messages, message_labels):
 		# determine what existing labels we already have?
