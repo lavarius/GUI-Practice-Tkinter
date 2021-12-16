@@ -12,7 +12,7 @@ message_labels = []
 
 
 class Chat(ttk.Frame):
-    def __init__(self, container, **kwargs):
+    def __init__(self, container, background, **kwargs):
         # super class call
         super().__init__(container, **kwargs)
 
@@ -22,12 +22,12 @@ class Chat(ttk.Frame):
 
         # a message frame to put into our messages
         #self.messages_frame = ttk.Frame(self)
-        self.message_window = MessageWindow(self) # create a message object instead, not a frame but now a Canvas
+        self.message_window = MessageWindow(self, background=background) # create a message object instead, not a frame but now a Canvas
         # place messages_frame using grid, entire cell with some top&bottom padding
         self.message_window.grid(row=0, column=0, sticky="NSEW", pady=5)
 
         # add a button frame for 'input_frame'
-        input_frame = ttk.Frame(self, padding=10) # frame to contain button
+        input_frame = ttk.Frame(self, style="Controls.TFrame", padding=10) # frame to contain button
         # placed inside of self, which is the Chat object
 
         # On row 1, adding something else in row 0 later
@@ -40,6 +40,7 @@ class Chat(ttk.Frame):
         message_submit = ttk.Button(
             input_frame,
             text="Send",
+            style="SendButton.TButton",
             command=self.post_message
 
         )
@@ -49,6 +50,7 @@ class Chat(ttk.Frame):
         message_fetch = ttk.Button(
             input_frame,
             text="Fetch",
+            style="FetchButton.TButton",
             command=self.get_messages
         )
         message_fetch.pack()

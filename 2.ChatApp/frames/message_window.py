@@ -10,7 +10,7 @@ class MessageWindow(tk.Canvas):
 	def __init__(self, container, *args, **kwargs):
 		super().__init__(container, *args, **kwargs, highlightthickness=0)
 
-		self.message_frame = ttk.Frame(self)
+		self.message_frame = ttk.Frame(self, style="Messages.TFrame")
 		self.message_frame.columnconfigure(0, weight=1) # take up available space
 
 		# Canvas.create_window, now on self
@@ -77,7 +77,7 @@ class MessageWindow(tk.Canvas):
 		"""
 			Creates the message container and is responsible for calling the next method for creating the message contents
 		"""
-		container = ttk.Frame(self.message_frame)
+		container = ttk.Frame(self.message_frame, style="Messages.TFrame")
 		container.columnconfigure(1, weight=1)
 		container.grid(sticky="EW", padx=(10, 50), pady=10)
 
@@ -108,7 +108,8 @@ class MessageWindow(tk.Canvas):
 		avatar_photo = ImageTk.PhotoImage(resized_img)
 		avatar_label = ttk.Label(
 			container,
-			image=avatar_photo
+			image=avatar_photo,
+			style="Avatar.TLabel"
 		)
 		# save this image somewhere so it doesn't get trashed
 		avatar_label.image = avatar_photo #creates image property inside avatar label as a custom property assigned as avatar_photo
@@ -124,7 +125,8 @@ class MessageWindow(tk.Canvas):
 
 		time_label = ttk.Label(
 			container,
-			text=message_time
+			text=message_time,
+			style="Time.TLabel"
 		)
 		time_label.grid(row=0, column=1, sticky="NEW")
 
@@ -135,7 +137,8 @@ class MessageWindow(tk.Canvas):
 			text=message_content,
 			wraplength=800,
 			anchor="w",
-			justify="left" # label to left and text to left instead of center (default)
+			justify="left", # label to left and text to left instead of center (default)
+			style="Message.TLabel"
 		)
 
 		# place into container using grid
